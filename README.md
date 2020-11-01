@@ -4,7 +4,7 @@ Pi-PwnBox:rocket:-RogueAP:satellite:
 
 **Homemade (headless) PwnBox / RogueAP based on Raspberry Pi & Alfa WiFi USB Adapters.**
 
-[**WiFi Hacking Cheatsheets & Mind Map**](#wifi-hacking-cheatsheets--mind-map)
+[**WiFi Hacking Cheatsheets & Mind Map :bulb:**](#wifi-hacking-cheatsheets--mind-map)
 
 Designed to be used for:
 
@@ -87,12 +87,12 @@ Installation
    git clone https://github.com/koutto/pi-pwnbox-rogueap.git
    ```
 
-5. **Important:** Edit install script configuration at the top of `install-system.sh`file:
+5. **Important:** Edit install script configuration at the top of `scripts/install-system.sh`file:
 
    - Choose *Guacamole* passwords.
    - Set WiFi interfaces persistent names based on their MAC addresses: `wlxaabbccddeeff` for a device with MAC address `aa:bb:cc:dd:ee:ff`.
-   - Set MAC addresses of Eth0 & Wlan0 (built-in interfaces).
-   - Set WiFi connection settings
+   - Set MAC addresses of `eth0` & `wlan0` (built-in interfaces).
+   - Set WiFi connection settings.
 
 6. Run install script (will pause at the end of each step in order to allow for manual inspection of command outputs)
 
@@ -105,10 +105,12 @@ Installation
 
    ```
    ip a
+   iwconfig
    ```
 
-   - Built-in wired and wireless interfaces should be named `eth0` and `wlan0` respectively
+   - Built-in wired and wireless interfaces should be named `eth0` and `wlan0` respectively.
    - WiFi USB Adapters should use persistent naming (modern naming convention).
+   - AP (`PWNBOX_ADMIN`) should be started on appropriate `wlx*`interface.
 
 8. Configure VNC-over-HTTP on *Guacamole*:
 
@@ -151,11 +153,11 @@ When booting, PwnBox automatically connects to:
 
 - Wired network if Ethernet port is connected.
 
-- WiFi network (using built-in Raspberry Pi chip) if there is available wireless network with saved connection settings. If you want to connect to a new WiFi network (not saved into PwnBox), it is necessary to add WPA passphrase of the network before:
+- WiFi network (using built-in Raspberry Pi chip) if there is available wireless network with saved connection settings (in `/etc/wpa_supplicant`). If you want to connect to a new WiFi network (not saved into PwnBox), it is necessary to add WPA passphrase of the network before:
 
   1. Access the PwnBox using another way, e.g.:
 
-     - Use wireless dedicated administration network,
+     - Use wireless dedicated administration network (most convenient approach),
      - Use wired network,
      - Use monitor + (wireless) keyboard.
 
@@ -165,7 +167,15 @@ When booting, PwnBox automatically connects to:
      wpa_passphrase <SSID> <passphrase> >> /etc/wpa_supplicant.conf
      ```
 
+  3. Test connection:
 
+     ```
+     wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+     dhclient -v wlan0
+     ping 8.8.8.8
+     ```
+
+     
 
 ## PwnBox Remote Access
 
@@ -185,16 +195,16 @@ PwnBox can be controlled through:
 
 **PwnBox's IP** depends on the network you want to access it from:
 
-- Via Wireless Dedicated Administration Network (i.e. connected to hidden SSID `PWNBOX_ADMIN`): IP is always `10.0.0.1`
+- Via Wireless Dedicated Administration Network (i.e. connected to hidden SSID `PWNBOX_ADMIN`): IP is always `10.0.0.1`.
 - Via LAN Network (wireless or wired): IP depends on the value allocated by DHCP server. IP can be found using `netdiscover`for example.
 
-*Note: Guacamole service might take a lot of resources (RAM) when running. If not used, it can be stopped using `stop-guacamole.sh` script*
+*Note: Guacamole service might take a lot of resources (RAM) when running. If not used, it can be stopped using `stop-guacamole.sh` script.*
 
 
 
 ## Usage
 
-- Most of the time, only SSH access is necessary. (CLI tools)
+- Most of the time, only SSH access is necessary. (CLI tools).
 
 - Additional tools are installed into */usr/share*.
 
@@ -209,7 +219,7 @@ WiFi Hacking Cheatsheets & Mind Map
 
 - [WiFi Hacking MindMap](mindmap/WiFi-Hacking-MindMap-v1.png) [[PDF version](mindmap/WiFi-Hacking-MindMap-v1.pdf)]
 
-[![](mindmap/WiFi-Hacking-MindMap-v1-thumb.png))](mindmap/WiFi-Hacking-MindMap-v1.png)
+[![](mindmap/WiFi-Hacking-MindMap-v1-thumb.png)](mindmap/WiFi-Hacking-MindMap-v1.png)
 
 
 
