@@ -36,10 +36,10 @@ Equipment used
 WiFi USB Adapters Overview
 --------------------------
 
-| Device | Chipset  | Usage | 802.11 | 2.4 Ghz | 5 Ghz | Kali support out-of-box | Monitor Mode | Injection | AP Mode |
+| Device | Chipset  | Usage | 802.11 | 2.4 Ghz | 5 Ghz | Kali  out-of-box | Mon. Mode | Injec-tion | AP Mode |
 |----------|--------|--------|--------|------|-------------------------|--------------|-----------|---------|--------|
 | **Built-in Raspberry Pi 3 B+ WiFi chip** | Broadcom 43430 | **Connection to Internet** (auto-start at boot if WiFi key added in config) | 802.11 b/g/n/ac | Y | Y | Y | N* | N* | Y |
-| **BrosTrend AC1L AC1200** | Realtek RTL8812AU | **Acces Point for Remote Access **(auto-start at boot) | 802.11 a/b/g/n/ac | Y | Y | N | Y | N | Y |
+| **BrosTrend AC1L AC1200** | Realtek RTL8812AU | **Acces Point for Remote Access** (auto-start at boot) | 802.11 a/b/g/n/ac | Y | Y | N | Y | N | Y |
 | **Alfa AWUS036NEH** | Ralink RT2870/3070 | **WiFi Attacks** | 802.11 b/g/n | Y | N | Y | Y | Y | Y |
 | **Alfa AWUS036ACH** | Realtek RTL8812AU | **WiFi Attacks** | 802.11 a/b/g/n/ac | Y | Y | Y | Y | Y | Y |
 
