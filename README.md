@@ -130,7 +130,7 @@ Installation
 
 When booting, PwnBox automatically connects to:
 - Wired network if Ethernet port is connected.
-- WiFi network (using built-in Raspberry Pi chip) if there is available wireless network with saved connection settings (in `/etc/wpa_supplicant`). If you want to connect to a new WiFi network (not saved into PwnBox), it is necessary to add WPA passphrase of the network before:
+- WiFi network (using built-in Raspberry Pi chip) if there is available wireless network with saved connection settings (in `/etc/wpa_supplicant.conf`). If you want to connect to a new WiFi network (not saved into PwnBox), it is necessary to add WPA passphrase of the network before:
 
   1. Access the PwnBox using another way, e.g.:
 
