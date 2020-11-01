@@ -21,24 +21,16 @@ Designed to be used for:
 Table of Contents
 =================
 
-  * [Pi-PwnBox-RogueAP](#pi-pwnbox-rogueap)
+* [Pi-PwnBox-RogueAP](#pi-pwnbox-rogueap)
 * [Equipment used](#equipment-used)
-
 * [WiFi USB Adapters Overview](#wifi-usb-adapters-overview)
-
 * [Installation](#installation)
-
 * [PwnBox Network Configuration](#pwnbox-network-configuration)
-
   * [Wireless Dedicated Administration Network](#wireless-dedicated-administration-network)
   * [LAN Network (Wireless or Wired)](#lan-network-wireless-or-wired)
-
 * [PwnBox Remote Access](#pwnbox-remote-access)
-
 * [Usage](#usage)
-
 * [WiFi Hacking Cheatsheets &amp; Mind Map](#wifi-hacking-cheatsheets--mind-map)
-
 * [Possible Upgrade](#possible-upgrade)
 
   
