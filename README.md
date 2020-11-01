@@ -4,7 +4,7 @@ Pi-PwnBox-RogueAP
 
 **Homemade (headless) PwnBox / RogueAP based on Raspberry Pi & Alfa WiFi USB Adapters.**
 
-[**WiFi Hacking Cheatsheets & Mind Map**](#WiFi-Hacking-Cheatsheets-&-Mind-Map)
+[**WiFi Hacking Cheatsheets & Mind Map**](#wifi-hacking-cheatsheets--mind-map)
 
 Designed to be used for:
 
@@ -36,7 +36,7 @@ Equipment used
 WiFi USB Adapters Overview
 --------------------------
 
-| Device | Chipset  | Usage | 802.11 | 2.4Ghz | 5Ghz | Kali support out-of-box | Monitor Mode | Injection | AP Mode |
+| Device | Chipset  | Usage | 802.11 | 2.4 Ghz | 5 Ghz | Kali support out-of-box | Monitor Mode | Injection | AP Mode |
 |----------|--------|--------|--------|------|-------------------------|--------------|-----------|---------|--------|
 | **Built-in Raspberry Pi 3 B+ WiFi chip** | Broadcom 43430 | **Connection to Internet** (auto-start at boot if WiFi key added in config) | 802.11 b/g/n/ac | Y | Y | Y | N* | N* | Y |
 | **BrosTrend AC1L AC1200** | Realtek RTL8812AU | **Acces Point for Remote Access **(auto-start at boot) | 802.11 a/b/g/n/ac | Y | Y | N | Y | N | Y |
@@ -184,7 +184,7 @@ WiFi Hacking Cheatsheets & Mind Map
 
 - [WiFi Hacking MindMap](mindmap/WiFi-Hacking-MindMap-v1.png) [[PDF version](mindmap/WiFi-Hacking-MindMap-v1.pdf)]
 
-![WiFi-Hacking-Mindmap](/home/koutto/Bureau/Project-PwnBox/pi-pwnbox-rogueap/mindmap/WiFi-Hacking-MindMap-v1-thumb.png)
+![WiFi-Hacking-Mindmap](mindmap/WiFi-Hacking-MindMap-v1-thumb.png)
 
 
 
