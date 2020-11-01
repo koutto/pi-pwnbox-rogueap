@@ -9,7 +9,7 @@ Pi-PwnBox:rocket:-RogueAP:satellite:
 Designed to be used for:
 
 - On-site Red Team engagements,
-- WiFi Security assessment, 
+- WiFi Security assessments, 
 - WiFi Attacks practice.
 
 
