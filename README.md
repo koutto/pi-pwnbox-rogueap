@@ -222,10 +222,9 @@ WiFi Hacking Cheatsheets & Mind Map
 [![](mindmap/WiFi-Hacking-MindMap-v1-thumb.png)](mindmap/WiFi-Hacking-MindMap-v1.png)
 
 
-
-- WiFi Hacking Theory Cheatsheets
-- WiFi Hacking Commands Cheatsheets
-- MitM Commands Cheatsheets
+- [WiFi Hacking Theory Cheatsheets](https://github.com/koutto/pi-pwnbox-rogueap/wiki)
+- [WiFi Hacking Commands Cheatsheets](https://github.com/koutto/pi-pwnbox-rogueap/wiki)
+- [MitM Commands Cheatsheets](https://github.com/koutto/pi-pwnbox-rogueap/wiki/MitM-Commands)
 
 
 
