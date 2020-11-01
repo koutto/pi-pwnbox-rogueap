@@ -1,5 +1,5 @@
 
-Pi-PwnBox-RogueAP
+Pi-PwnBox:rocket:-RogueAP:satellite:
 ===============================================================================
 
 **Homemade (headless) PwnBox / RogueAP based on Raspberry Pi & Alfa WiFi USB Adapters.**
@@ -209,7 +209,7 @@ WiFi Hacking Cheatsheets & Mind Map
 
 - [WiFi Hacking MindMap](mindmap/WiFi-Hacking-MindMap-v1.png) [[PDF version](mindmap/WiFi-Hacking-MindMap-v1.pdf)]
 
-![WiFi-Hacking-Mindmap](mindmap/WiFi-Hacking-MindMap-v1-thumb.png)
+[![](mindmap/WiFi-Hacking-MindMap-v1-thumb.png))](mindmap/WiFi-Hacking-MindMap-v1.png)
 
 
 
