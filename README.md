@@ -68,44 +68,33 @@ Installation
 ------------
 
 1. Download Kali Linux ARM Image for Raspberry Pi: https://www.offensive-security.com/kali-linux-arm-images/
-
 2. Flash Kali Linux ARM Image for Rapberry Pi onto Micro SD Card.
-
 3. Make sure to have Internet connection on PwnBox.
-
 4. Download install scripts/configurations on the PwnBox:
-
    ```
    git clone https://github.com/koutto/pi-pwnbox-rogueap.git
    ```
-
 5. **Important:** Edit install script configuration at the top of `scripts/install-system.sh`file:
 
    - Choose *Guacamole* passwords.
    - Set WiFi interfaces persistent names based on their MAC addresses: `wlxaabbccddeeff` for a device with MAC address `aa:bb:cc:dd:ee:ff`.
    - Set MAC addresses of `eth0` & `wlan0` (built-in interfaces).
    - Set WiFi connection settings.
-
 6. Run install script (will pause at the end of each step in order to allow for manual inspection of command outputs)
-
    ```
    cd pi-pwnbox-rogueap/scripts
    ./install-system.sh
    ```
-
 7. Reboot & check correct configuration of network interfaces:
 
    ```
    ip a
    iwconfig
    ```
-
    - Built-in wired and wireless interfaces should be named `eth0` and `wlan0` respectively.
    - WiFi USB Adapters should use persistent naming (modern naming convention).
    - AP (`PWNBOX_ADMIN`) should be started on appropriate `wlx*`interface.
-
 8. Configure VNC-over-HTTP on *Guacamole*:
-
    1. Connect to Guacamole at http://<ip_pwnbox>:8080/guacamole/
    2. Go to *guacadmin (top right) > Settings > Connections*
    3. Click on *New Connection*
@@ -121,7 +110,6 @@ Installation
       - Network Port = `5901`
       - Authentication Password = `(password chosen at install when running install-system.sh)`
       - Color depth = `True color (32-bit)`
-
 9. Change default credentials:
    - Kali system credentials
    - Guacamole credentials (via `http://<ip_pwnbox>:8080/guacamole/#/manage/mysql/users/guacadmin`)
@@ -133,7 +121,6 @@ Installation
 ### Wireless Dedicated Administration Network
 
  When booting, PwnBox automatically spawns an AP on one interface to allow for easy remote access:
-
 - SSID = `PWNBOX_ADMIN` (Hidden SSID)
 - WPA2  Passphrase (PSK) = `Koutto!PwnB0x!`
 - IP AP = 10.0.0.1 (when connected to this network, PwnBox can be accessed at this IP)
@@ -142,9 +129,7 @@ Installation
 ### LAN Network (Wireless or Wired)
 
 When booting, PwnBox automatically connects to:
-
 - Wired network if Ethernet port is connected.
-
 - WiFi network (using built-in Raspberry Pi chip) if there is available wireless network with saved connection settings (in `/etc/wpa_supplicant`). If you want to connect to a new WiFi network (not saved into PwnBox), it is necessary to add WPA passphrase of the network before:
 
   1. Access the PwnBox using another way, e.g.:
@@ -152,21 +137,16 @@ When booting, PwnBox automatically connects to:
      - Use wireless dedicated administration network (most convenient approach),
      - Use wired network,
      - Use monitor + (wireless) keyboard.
-
   2. Add WPA passphrase to PwnBox local configuration:
-
      ```
      wpa_passphrase <SSID> <passphrase> >> /etc/wpa_supplicant.conf
      ```
-
   3. Test connection:
-
      ```
      wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
      dhclient -v wlan0
      ping 8.8.8.8
      ```
-
      
 
 ## PwnBox Remote Access
@@ -197,11 +177,8 @@ PwnBox can be controlled through:
 ## Usage
 
 - Most of the time, only SSH access is necessary. (CLI tools).
-
 - Additional tools are installed into */usr/share*.
-
 - Tools with GUI or requiring spawning of multiple *xterm* (e.g. *airgeddon*) can be run through *Guacamole*.
-
 - Tools with Web UI (e.g. *Kismet*, *Bettercap*) can be started and accessed remotely.
 
   
