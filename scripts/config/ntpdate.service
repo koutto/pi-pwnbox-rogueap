@@ -1,0 +1,11 @@
+[Unit]
+Description=Update Datetime using NTP
+After=sshd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/ntpdate fr.pool.ntp.org
+User=root
+
+[Install]
+WantedBy=multi-user.target

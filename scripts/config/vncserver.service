@@ -1,0 +1,14 @@
+[Unit]
+Description=VNC remote desktop server
+After=sshd.service
+
+[Service]
+Type=dbus
+ExecStart=/usr/bin/vncserver -localhost no
+Restart=on-failure
+RestartSec=3
+User=root
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
