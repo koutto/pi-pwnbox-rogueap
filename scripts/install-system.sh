@@ -270,7 +270,7 @@ ifdown ${WLAN_INTERFACE_ALFA_AWUS036ACH}
 
 EOF
 
-wpa_passhrase ${WIFI_SSID} ${WIFI_PASSPHRASE} >> /etc/wpa_supplicant.conf
+wpa_passphrase ${WIFI_SSID} ${WIFI_PASSPHRASE} >> /etc/wpa_supplicant.conf
 read -n 1 -s -r -p "Press any key to continue"
 
 
