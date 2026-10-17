@@ -17,6 +17,10 @@
 GUACAMOLE_PASSWORD="MyGuacamolePassword"
 GUACAMOLE_MYSQL_PASSWORD="MyGuacamoleMySQLPassword"
 
+# Passphrase for the hidden PWNBOX_ADMIN administration Access Point (WPA2-PSK)
+# IMPORTANT: change this before running the script
+ADMIN_AP_PASSPHRASE="Koutto!PwnB0x!"
+
 
 # Wifi interface names:
 # This script will turn on persistent/predictable naming for WiFI USB Adapters (modern naming)
@@ -59,8 +63,21 @@ YELLOW=`tput setaf 3`
 RESET=`tput sgr0`
 
 if [[ $EUID -ne 0 ]]; then
-   echo "${RED}[!] This script must be run as root ${RESET}" 
+   echo "${RED}[!] This script must be run as root ${RESET}"
    exit 1
+fi
+
+# Run from the script's own directory so relative config/ paths resolve
+# regardless of the caller's working directory
+cd "$(dirname "$(readlink -f "$0")")" || { echo "${RED}[!] Cannot cd to script directory${RESET}"; exit 1; }
+
+# Sanity check: the three USB WiFi adapter interface names must be distinct,
+# otherwise /etc/network/interfaces gets duplicate iface stanzas (ifupdown error)
+if [ "${WLAN_INTERFACE_BROSTREND_AC1L}" = "${WLAN_INTERFACE_ALFA_AWUS036NEH}" ] || \
+   [ "${WLAN_INTERFACE_BROSTREND_AC1L}" = "${WLAN_INTERFACE_ALFA_AWUS036ACH}" ] || \
+   [ "${WLAN_INTERFACE_ALFA_AWUS036NEH}" = "${WLAN_INTERFACE_ALFA_AWUS036ACH}" ]; then
+    echo "${RED}[!] WLAN_INTERFACE_* values must be distinct. Edit the configuration at the top of this script.${RESET}"
+    exit 1
 fi
 
 echo "${YELLOW}[!] Make sure to have correct configuration at the beginning of this script before continuing !!"
@@ -156,8 +173,8 @@ read -n 1 -s -r -p "Press any key to continue"
 echo "${YELLOW}[~] Install and enable VNC service (autostart at boot)...${RESET}"
 apt-get install -y tigervnc-common tigervnc-standalone-server
 apt-get install -y autocutsel
-rm -f /tmp/.X11-unix/X0
-rm -f /tmp/.X0-lock
+rm -f /tmp/.X11-unix/X1
+rm -f /tmp/.X1-lock
 echo "${YELLOW}Enter VNC password to use:${RESET}"
 vncpasswd # Will ask for VNC password
 if [ ! -f /root/.vnc/passwd ]; then
@@ -269,7 +286,13 @@ iface ${WLAN_INTERFACE_ALFA_AWUS036ACH} inet manual
 
 EOF
 
-wpa_passphrase ${WIFI_SSID} ${WIFI_PASSPHRASE} >> /etc/wpa_supplicant.conf
+# Only append the network block if this SSID is not already configured
+# (avoids duplicate network={} entries when the script is run more than once)
+if ! grep -q "ssid=\"${WIFI_SSID}\"" /etc/wpa_supplicant.conf 2>/dev/null; then
+	wpa_passphrase "${WIFI_SSID}" "${WIFI_PASSPHRASE}" >> /etc/wpa_supplicant.conf
+else
+	echo "${YELLOW}[~] SSID ${WIFI_SSID} already present in /etc/wpa_supplicant.conf, skipping${RESET}"
+fi
 read -n 1 -s -r -p "Press any key to continue"
 
 
@@ -313,7 +336,7 @@ macaddr_acl=0
 ignore_broadcast_ssid=1 # hidden SSID
 auth_algs=1
 wpa=2
-wpa_passphrase=Koutto!PwnB0x!
+wpa_passphrase=${ADMIN_AP_PASSPHRASE}
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=CCMP
 wpa_group_rekey=86400
@@ -347,8 +370,8 @@ read -n 1 -s -r -p "Press any key to continue"
 # -------------------------------------------------------------------------------------------------
 # Install Additional Tools (in /usr/share)
 
-echo "${YELLOW}[~] Install wifite, reaver, bully, mdk4, mdk3, kismet from repository (if not already)...${RESET}"
-apt-get install -y wifite reaver bully mdk4 mdk3 kismet
+echo "${YELLOW}[~] Install wifite, reaver, bully, mdk4, kismet from repository (if not already)...${RESET}"
+apt-get install -y wifite reaver bully mdk4 kismet
 read -n 1 -s -r -p "Press any key to continue"
 
 
@@ -357,8 +380,15 @@ apt-get install -y hcxdumptool hcxtools cowpatty dsniff
 read -n 1 -s -r -p "Press any key to continue"
 
 
-echo "${YELLOW}[~] Install dnsmasq, hostapd, hostapd-wpe, hostapd-mana from repository (if not already)...${RESET}"
-apt-get install -y dnsmasq hostapd hostapd-wpe hostapd-mana
+echo "${YELLOW}[~] Install dnsmasq, hostapd from repository (if not already)...${RESET}"
+apt-get install -y dnsmasq hostapd
+# hostapd-wpe and hostapd-mana both ship their own /usr/sbin/hostapd and conflict
+# with hostapd and with each other, so they cannot be installed in one apt call.
+# Install each separately and tolerate failure (they replace the base hostapd binary).
+echo "${YELLOW}[~] Install hostapd-wpe (optional, conflicts with base hostapd)...${RESET}"
+apt-get install -y hostapd-wpe || echo "${YELLOW}[~] hostapd-wpe unavailable, skipping${RESET}"
+echo "${YELLOW}[~] Install hostapd-mana (optional, conflicts with base hostapd)...${RESET}"
+apt-get install -y hostapd-mana || echo "${YELLOW}[~] hostapd-mana unavailable, skipping${RESET}"
 read -n 1 -s -r -p "Press any key to continue"
 
 
@@ -380,7 +410,7 @@ if [ -d /usr/share/wifipumpkin3 ]; then
 else
 	cd /usr/share && git clone https://github.com/P0cL4bs/wifipumpkin3.git
 fi
-cd /usr/share/wifipumpkin3
+cd /usr/share/wifipumpkin3 || exit 1
 python3 -m pip install . --break-system-packages 2>/dev/null || python3 -m pip install .
 python3 -m pip install pyOpenSSL --break-system-packages 2>/dev/null || python3 -m pip install pyOpenSSL
 read -n 1 -s -r -p "Press any key to continue"
@@ -392,7 +422,7 @@ if [ -d /usr/share/wifiphisher ]; then
 else
 	cd /usr/share && git clone https://github.com/wifiphisher/wifiphisher.git
 fi
-cd /usr/share/wifiphisher
+cd /usr/share/wifiphisher || exit 1
 apt-get install -y libnl-3-dev libnl-genl-3-dev
 python3 -m pip install . --break-system-packages 2>/dev/null || python3 -m pip install .
 read -n 1 -s -r -p "Press any key to continue"
@@ -431,7 +461,7 @@ if [ -d /usr/share/eaphammer ]; then
 else
 	cd /usr/share && git clone https://github.com/s0lst1c3/eaphammer.git
 fi
-cd /usr/share/eaphammer
+cd /usr/share/eaphammer || exit 1
 ./kali-setup || true
 python3 -m pip install flask_cors flask_socketio gevent --break-system-packages 2>/dev/null || python3 -m pip install flask_cors flask_socketio gevent
 read -n 1 -s -r -p "Press any key to continue"
