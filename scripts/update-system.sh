@@ -35,7 +35,7 @@ read -n 1 -s -r -p "Press any key to continue"
 
 echo "${YELLOW}[~] Update Wifipumpkin3...${RESET}"
 if [ -d /usr/share/wifipumpkin3 ]; then
-	cd /usr/share/wifipumpkin3
+	cd /usr/share/wifipumpkin3 || exit 1
 	git pull
 	python3 -m pip install . --break-system-packages 2>/dev/null || python3 -m pip install .
 	wifipumpkin3 --version || true
@@ -47,7 +47,7 @@ read -n 1 -s -r -p "Press any key to continue"
 
 echo "${YELLOW}[~] Update Wifiphisher...${RESET}"
 if [ -d /usr/share/wifiphisher ]; then
-	cd /usr/share/wifiphisher
+	cd /usr/share/wifiphisher || exit 1
 	git pull
 	python3 -m pip install . --break-system-packages 2>/dev/null || python3 -m pip install .
 else
@@ -58,7 +58,7 @@ read -n 1 -s -r -p "Press any key to continue"
 
 echo "${YELLOW}[~] Update Fluxion...${RESET}"
 if [ -d /usr/share/fluxion ]; then
-	cd /usr/share/fluxion
+	cd /usr/share/fluxion || exit 1
 	git pull
 else
 	echo "${RED}[!] Fluxion not found in /usr/share/fluxion${RESET}"
@@ -68,7 +68,7 @@ read -n 1 -s -r -p "Press any key to continue"
 
 echo "${YELLOW}[~] Update EAPHammer...${RESET}"
 if [ -d /usr/share/eaphammer ]; then
-	cd /usr/share/eaphammer
+	cd /usr/share/eaphammer || exit 1
 	git pull
 	# Setup takes lots of time, do it manually
 	#./kali-setup
@@ -81,7 +81,7 @@ read -n 1 -s -r -p "Press any key to continue"
 
 echo "${YELLOW}[~] Update Airgeddon...${RESET}"
 if [ -d /usr/share/airgeddon ]; then
-	cd /usr/share/airgeddon
+	cd /usr/share/airgeddon || exit 1
 	git pull
 else
 	echo "${RED}[!] Airgeddon not found in /usr/share/airgeddon${RESET}"
@@ -91,7 +91,7 @@ read -n 1 -s -r -p "Press any key to continue"
 
 echo "${YELLOW}[~] Update Berate_ap...${RESET}"
 if [ -d /usr/share/berate_ap ]; then
-	cd /usr/share/berate_ap
+	cd /usr/share/berate_ap || exit 1
 	git pull
 else
 	echo "${RED}[!] Berate_ap not found in /usr/share/berate_ap${RESET}"
@@ -101,7 +101,7 @@ read -n 1 -s -r -p "Press any key to continue"
 
 echo "${YELLOW}[~] Update WPA_Sycophant...${RESET}"
 if [ -d /usr/share/wpa_sycophant ]; then
-	cd /usr/share/wpa_sycophant
+	cd /usr/share/wpa_sycophant || exit 1
 	git pull
 else
 	echo "${RED}[!] WPA_Sycophant not found in /usr/share/wpa_sycophant${RESET}"
