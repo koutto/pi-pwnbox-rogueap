@@ -274,6 +274,36 @@ ip link show
 ```
 Then re-run the network configuration section or update `/etc/udev/rules.d/70-persistent-net.rules` manually.
 
+### Reverse shell / C2 session over 4G drops when plugging in Ethernet
+When the PwnBox reaches the Internet through a 4G USB dongle (e.g. `eth1`) and you run `dhclient eth0` after plugging in a network cable, the new DHCP lease installs a **second default route via `eth0`**. Because both default routes share the same metric, the kernel may start sending traffic out `eth0` with the wrong source address, which breaks the established reverse shell routed over 4G (see issue [#7](https://github.com/koutto/pi-pwnbox-rogueap/issues/7)).
+
+The fix is to make sure the 4G interface keeps the **preferred (lowest-metric) default route**, so pulling a lease on `eth0` does not take over the default gateway.
+
+**Option A — give `eth0` a higher route metric when requesting a lease** (keeps 4G as default, `eth0` still usable):
+```bash
+# Lower metric = higher priority. 4G stays default (e.g. metric 100), eth0 is lower priority.
+dhclient -e IF_METRIC=200 eth0
+```
+To make it persistent, set the metric in `/etc/network/interfaces`:
+```bash
+iface eth0 inet dhcp
+  metric 200
+```
+and ensure the 4G dongle interface uses a lower metric (e.g. `metric 100`).
+
+**Option B — get an IP on `eth0` without touching the default route** (use `eth0` only for the local LAN):
+```bash
+# Request an address but no default gateway from the eth0 DHCP server
+dhclient -e IF_METRIC=1000 eth0
+# or, persistently, drop "routers" from the dhclient request for eth0 in
+# /etc/dhcp/dhclient.conf (interface "eth0" { request subnet-mask, broadcast-address; })
+```
+
+Verify which default route is active:
+```bash
+ip route show default
+```
+
 
 
 Possible Upgrade
