@@ -32,6 +32,7 @@ Table of Contents
 * [PwnBox Remote Access](#pwnbox-remote-access)
 * [Usage](#usage)
 * [WiFi Hacking Cheatsheets &amp; Mind Map](#wifi-hacking-cheatsheets--mind-map)
+* [Cracking Captured Credentials with hashcat](#cracking-captured-credentials-with-hashcat)
 * [Troubleshooting](#troubleshooting)
 * [Possible Upgrade](#possible-upgrade)
 
@@ -206,6 +207,42 @@ WiFi Hacking Cheatsheets & Mind Map
 - [WiFi Hacking Theory Cheatsheets](https://github.com/koutto/pi-pwnbox-rogueap/wiki)
 - [WiFi Hacking Commands Cheatsheets](https://github.com/koutto/pi-pwnbox-rogueap/wiki)
 - [MitM Commands Cheatsheets](https://github.com/koutto/pi-pwnbox-rogueap/wiki/MitM-Commands)
+
+
+
+Cracking Captured Credentials with hashcat
+------------------------------------------
+
+Once a WPA/WPA2 handshake or an EAP MSCHAPv2 challenge/response has been captured, the credentials can be cracked offline with `hashcat` (see issue [#8](https://github.com/koutto/pi-pwnbox-rogueap/issues/8)). `hashcat` ships with Kali, and `hcxtools` is installed by `install-system.sh`.
+
+> Capturing a handshake requires a connected client (deauth one to force a reconnect). MSCHAPv2 challenge/response is captured by luring a client onto a rogue AP (e.g. `hostapd-wpe`, `eaphammer`, `wpa_sycophant`). Only test against networks you are authorized to assess.
+
+### WPA/WPA2 handshake (hash mode 22000)
+Convert the capture to the modern `hc22000` format with `hcxpcapngtool`, then crack:
+```bash
+# From a .pcapng/.cap capture containing the 4-way handshake (or a PMKID)
+hcxpcapngtool -o handshake.hc22000 capture.pcapng
+
+# Dictionary attack
+hashcat -m 22000 handshake.hc22000 /usr/share/wordlists/rockyou.txt
+
+# Mask / brute-force example (8 digits)
+hashcat -m 22000 handshake.hc22000 -a 3 '?d?d?d?d?d?d?d?d'
+```
+Older captures using the legacy `hccapx` format can still be cracked with `-m 2500`, but `22000` is recommended.
+
+### EAP MSCHAPv2 challenge/response (hash mode 5500)
+Rogue-AP tools such as `hostapd-wpe` log the username, the server challenge and the client response (typically to `/var/log/hostapd-wpe.log`). Assemble them into the hashcat NetNTLMv1 / MSCHAPv2 format and crack:
+```bash
+# Format: username::::<NT-response-hex>:<challenge-hex>   (hex strings without colons)
+hashcat -m 5500 'victim::::<response>:<challenge>' /usr/share/wordlists/rockyou.txt
+```
+`hostapd-wpe` also prints a ready-to-use `asleap` command for the same capture; `hashcat -m 5500` is the GPU-accelerated equivalent.
+
+Show the recovered passwords once a job finishes:
+```bash
+hashcat -m 22000 handshake.hc22000 --show   # or -m 5500 for MSCHAPv2
+```
 
 
 
