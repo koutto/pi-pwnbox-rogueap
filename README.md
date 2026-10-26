@@ -32,6 +32,7 @@ Table of Contents
 * [PwnBox Remote Access](#pwnbox-remote-access)
 * [Usage](#usage)
 * [WiFi Hacking Cheatsheets &amp; Mind Map](#wifi-hacking-cheatsheets--mind-map)
+* [Cracking Captured Credentials with hashcat](#cracking-captured-credentials-with-hashcat)
 * [Troubleshooting](#troubleshooting)
 * [Possible Upgrade](#possible-upgrade)
 
@@ -209,6 +210,42 @@ WiFi Hacking Cheatsheets & Mind Map
 
 
 
+Cracking Captured Credentials with hashcat
+------------------------------------------
+
+Once a WPA/WPA2 handshake or an EAP MSCHAPv2 challenge/response has been captured, the credentials can be cracked offline with `hashcat` (see issue [#8](https://github.com/koutto/pi-pwnbox-rogueap/issues/8)). `hashcat` ships with Kali, and `hcxtools` is installed by `install-system.sh`.
+
+> Capturing a handshake requires a connected client (deauth one to force a reconnect). MSCHAPv2 challenge/response is captured by luring a client onto a rogue AP (e.g. `hostapd-wpe`, `eaphammer`, `wpa_sycophant`). Only test against networks you are authorized to assess.
+
+### WPA/WPA2 handshake (hash mode 22000)
+Convert the capture to the modern `hc22000` format with `hcxpcapngtool`, then crack:
+```bash
+# From a .pcapng/.cap capture containing the 4-way handshake (or a PMKID)
+hcxpcapngtool -o handshake.hc22000 capture.pcapng
+
+# Dictionary attack
+hashcat -m 22000 handshake.hc22000 /usr/share/wordlists/rockyou.txt
+
+# Mask / brute-force example (8 digits)
+hashcat -m 22000 handshake.hc22000 -a 3 '?d?d?d?d?d?d?d?d'
+```
+Older captures using the legacy `hccapx` format can still be cracked with `-m 2500`, but `22000` is recommended.
+
+### EAP MSCHAPv2 challenge/response (hash mode 5500)
+Rogue-AP tools such as `hostapd-wpe` log the username, the server challenge and the client response (typically to `/var/log/hostapd-wpe.log`). Assemble them into the hashcat NetNTLMv1 / MSCHAPv2 format and crack:
+```bash
+# Format: username::::<NT-response-hex>:<challenge-hex>   (hex strings without colons)
+hashcat -m 5500 'victim::::<response>:<challenge>' /usr/share/wordlists/rockyou.txt
+```
+`hostapd-wpe` also prints a ready-to-use `asleap` command for the same capture; `hashcat -m 5500` is the GPU-accelerated equivalent.
+
+Show the recovered passwords once a job finishes:
+```bash
+hashcat -m 22000 handshake.hc22000 --show   # or -m 5500 for MSCHAPv2
+```
+
+
+
 Troubleshooting
 ---------------
 
@@ -273,6 +310,36 @@ Check that your MAC addresses in `install-system.sh` match reality:
 ip link show
 ```
 Then re-run the network configuration section or update `/etc/udev/rules.d/70-persistent-net.rules` manually.
+
+### Reverse shell / C2 session over 4G drops when plugging in Ethernet
+When the PwnBox reaches the Internet through a 4G USB dongle (e.g. `eth1`) and you run `dhclient eth0` after plugging in a network cable, the new DHCP lease installs a **second default route via `eth0`**. Because both default routes share the same metric, the kernel may start sending traffic out `eth0` with the wrong source address, which breaks the established reverse shell routed over 4G (see issue [#7](https://github.com/koutto/pi-pwnbox-rogueap/issues/7)).
+
+The fix is to make sure the 4G interface keeps the **preferred (lowest-metric) default route**, so pulling a lease on `eth0` does not take over the default gateway.
+
+**Option A — give `eth0` a higher route metric when requesting a lease** (keeps 4G as default, `eth0` still usable):
+```bash
+# Lower metric = higher priority. 4G stays default (e.g. metric 100), eth0 is lower priority.
+dhclient -e IF_METRIC=200 eth0
+```
+To make it persistent, set the metric in `/etc/network/interfaces`:
+```bash
+iface eth0 inet dhcp
+  metric 200
+```
+and ensure the 4G dongle interface uses a lower metric (e.g. `metric 100`).
+
+**Option B — get an IP on `eth0` without touching the default route** (use `eth0` only for the local LAN):
+```bash
+# Request an address but no default gateway from the eth0 DHCP server
+dhclient -e IF_METRIC=1000 eth0
+# or, persistently, drop "routers" from the dhclient request for eth0 in
+# /etc/dhcp/dhclient.conf (interface "eth0" { request subnet-mask, broadcast-address; })
+```
+
+Verify which default route is active:
+```bash
+ip route show default
+```
 
 
 
